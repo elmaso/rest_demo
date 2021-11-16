@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:rest_demo/app/infrastructure/api.dart';
+import 'package:rest_demo/app/infrastructure/api_key.dart';
 import 'package:rest_demo/app/infrastructure/api_remote_services.dart';
 
 void main() {
@@ -51,11 +55,31 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _apiResponse = '';
+  String _datosEmp = '';
 
-  void _demoRestData() async{
+  //Para ver las variables que vamos a mandar a la api
+  final _expediente = ApiKey.testExp;
+  final _nss = ApiKey.testNss;
+  final _nonce = DateTime.now().toString();
+  final _secret = (ApiKey.apiSecret).toString();
+  String _hash = '';
+
+  void _demoRestData() async {
     final apiServices = await ApiRemoteServices(api: Api.sandbox());
-    final apiResponse = await apiServices.getDemoData();
-    setState(() => _apiResponse =  apiResponse);
+    final apiResponse = await apiServices.getErrorData();
+    ///Vamos poor el bueno
+    final datosEmp = await apiServices.getNombreEmp(
+       expediente: _expediente, numSS: _nss);
+    
+
+    setState(() {
+      print('le di click');
+      _apiResponse = apiResponse;
+      var _s = utf8.encode(_nss + _nonce + _secret);
+      var _y = (_nss + _nonce + _secret);
+      _hash = sha256.convert(_s).toString();
+      print('valores:$_y = hash:$_hash');
+    });
   }
 
   @override
@@ -76,20 +100,6 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
@@ -99,6 +109,16 @@ class _MyHomePageState extends State<MyHomePage> {
               _apiResponse,
               style: Theme.of(context).textTheme.caption,
             ),
+            const SizedBox(height: 20),
+            Text('''variables: 
+             exp: $_expediente,
+             nss:$_nss,
+             nonce: $_nonce,
+             secret: $_secret,
+             hash: $_hash
+             '''),
+            const SizedBox(height: 20),
+            Text('nombreEmp:  $_datosEmp'),
           ],
         ),
       ),
