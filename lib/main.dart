@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
@@ -60,16 +61,15 @@ class _MyHomePageState extends State<MyHomePage> {
   //Para ver las variables que vamos a mandar a la api
   final _expediente = ApiKey.testExp;
   final _nss = ApiKey.testNss;
-  final _nonce = DateTime.now().toString();
+  final _nonce = DateFormat('yyyyMMdd-hhmmss').format(DateTime.now());
   final _secret = (ApiKey.apiSecret).toString();
   String _hash = '';
 
   void _demoRestData() async {
-    final apiServices = await ApiRemoteServices(api: Api.sandbox());
-    final apiResponse = await apiServices.getErrorData();
-    ///Vamos poor el bueno
-    final datosEmp = await apiServices.getNombreEmp(
-       expediente: _expediente, numSS: _nss);
+    final apiServices = ApiRemoteServices(api: Api.sandbox());
+    final apiResponse = await apiServices.getNombreEmp( 
+      expediente: _expediente,
+       numSS: _nss,);
     
 
     setState(() {
