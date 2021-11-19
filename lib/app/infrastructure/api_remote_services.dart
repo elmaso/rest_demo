@@ -50,36 +50,32 @@ class ApiRemoteServices {
     final _ip = await getIp();
     const _empjson ='["paterno","curp","materno","fecha_ingreso","puesto","clase_contrato","sexo","exp_jefe","nombre_jefe"]';
 
-    // final _params = {
-    //   'emp_expediente': expediente,
-    //   'emp_nss': numSS,
-    //   'api_hash': _hash,
-    //   'api_nonce': _nonce,
-    //   'emp_uid': numSS,
-    //   'emp_ip': _ip,
-    //   "emp_json": [
-    //     "paterno",
-    //     "curp",
-    //     "materno",
-    //     "fecha_ingreso",
-    //     "puesto",
-    //     "clase_contrato",
-    //     "sexo",
-    //     "exp_jefe",
-    //     "nombre_jefe"
-    //   ]
-    // };
+    final _params = json.encode({
+      'emp_expediente': expediente,
+      'emp_nss': numSS,
+      'api_hash': _hash,
+      'api_nonce': _nonce,
+      'emp_uid': numSS,
+      'emp_ip': _ip,
+      "emp_json": [
+        "paterno",
+        "curp",
+        "materno",
+        "fecha_ingreso",
+        "puesto",
+        "clase_contrato",
+        "sexo",
+        "exp_jefe",
+        "nombre_jefe"
+      ]
+    });
 
     final response = await http.post(
       api.demoUri(),
-      body: {
-        'emp_expediente': expediente,
-        'emp_nss': numSS,
-        'api_hash': _hash,
-        'api_nonce': _nonce,
-        'emp_uid': numSS,
-        'emp_ip': _ip,
-        'emp_json': _empjson
+      body: _params,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
     );
     print("mande estos_nonce:$_nonce _hash $_hash");
